@@ -1,0 +1,48 @@
+<!--
+  results.html
+
+  Purpose:
+  - Display the predicted price returned by the backend along with the
+    vehicle details submitted by the user and the model used.
+
+  Notes:
+  - The template expects `prediction`, `model_name`, and `form_data` to be
+    supplied by the Flask `predict` view.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Price Prediction Result</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Price Prediction Result</h1>
+    
+    <div class="result-box">
+      <h2>Predicted Price</h2>
+      <div class="prediction-display">{{ prediction }}</div>
+      <p class="model-info">Model: <strong>{{ model_name }}</strong></p>
+    </div>
+
+    <div class="vehicle-details">
+      <h3>Vehicle Details Entered:</h3>
+      <table class="details-table">
+        <tr><td><strong>Year:</strong></td><td>{{ form_data.year }}</td></tr>
+        <tr><td><strong>Manufacturer:</strong></td><td>{{ form_data.manufacturer }}</td></tr>
+        <tr><td><strong>Model:</strong></td><td>{{ form_data.model }}</td></tr>
+        <tr><td><strong>Condition:</strong></td><td>{{ form_data.condition }}</td></tr>
+        <tr><td><strong>Cylinders:</strong></td><td>{{ form_data.cylinders }}</td></tr>
+        <tr><td><strong>Fuel Type:</strong></td><td>{{ form_data.fuel }}</td></tr>
+        <tr><td><strong>Transmission:</strong></td><td>{{ form_data.transmission_type }}</td></tr>
+        <tr><td><strong>Paint Color:</strong></td><td>{{ form_data.paint_color }}</td></tr>
+        <tr><td><strong>Description:</strong></td><td>{{ form_data.description }}</td></tr>
+      </table>
+    </div>
+
+    <p class="back-link"><a href="/">Make Another Prediction</a></p>
+  </div>
+</body>
+</html>

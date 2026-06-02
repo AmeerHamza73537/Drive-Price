@@ -1,0 +1,84 @@
+/* New light theme (no blue/purple) with warm accents and 3D-friendly styles */
+:root{
+  --bg-1: #fbfaf8; /* soft cream */
+  --bg-2: #fffefc; /* near white */
+  --card-bg: #ffffff;
+  --text-1: #24323a; /* dark slate */
+  --muted: #6b7780;
+  --accent: #2e8b57; /* warm green */
+  --accent-2: #d97706; /* warm orange */
+  --shadow-1: rgba(38,50,56,0.08);
+  --shadow-2: rgba(38,50,56,0.12);
+}
+
+body{
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,var(--bg-1), var(--bg-2));
+  color: var(--text-1);
+  margin: 0;
+  -webkit-font-smoothing:antialiased;
+}
+
+.container{
+  max-width: 980px;
+  margin: 42px auto;
+  background: var(--card-bg);
+  padding: 34px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px var(--shadow-1), 0 20px 60px var(--shadow-2);
+}
+
+h1{font-size:2.6rem;margin:0 0 6px;color:var(--text-1)}
+h2{font-size:1.4rem;margin-top:24px;margin-bottom:14px;color:var(--text-1)}
+p{color:var(--muted);line-height:1.7}
+
+.form-section{background: linear-gradient(180deg,#fff,#fcfdfb);padding:22px;border-radius:14px;margin-bottom:28px;border:1px solid rgba(45,70,56,0.05)}
+
+.form-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:14px}
+@media(max-width:900px){.form-row{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-weight:700;margin-bottom:8px;color:var(--text-1);font-size:0.95rem}
+.form-group input,.form-group textarea,.form-group select{padding:12px 14px;border:1px solid #eef0ee;border-radius:12px;background:var(--card-bg);font-size:0.98rem;color:var(--text-1);transition:box-shadow .15s ease,border-color .15s ease}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:rgba(46,139,87,0.18);box-shadow:0 6px 22px rgba(46,139,87,0.06)}
+.form-group textarea{min-height:110px}
+
+.btn-submit{width:100%;padding:14px 22px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(45,139,87,0.12);transition:transform .12s ease,box-shadow .12s ease}
+.btn-submit:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(45,139,87,0.14)}
+
+.model-note{background:#fff7ef;border:1px solid rgba(217,119,6,0.06);padding:12px;border-radius:12px;color:var(--text-1);font-weight:600}
+
+.plots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px}
+.plot img{width:100%;height:auto;border-radius:14px;box-shadow:0 12px 40px rgba(38,50,56,0.06);transform-origin:center}
+
+.result-box{background:linear-gradient(180deg,#fbfff6,#ffffff);padding:26px;border-radius:16px;margin-bottom:22px;border:1px solid rgba(46,139,87,0.06);box-shadow:0 18px 50px rgba(38,50,56,0.06)}
+.prediction-display{font-size:2.6rem;font-weight:900;color:var(--accent);margin:14px 0}
+.model-info{color:var(--muted);font-size:0.98rem}
+
+.vehicle-details{background:#fffaf5;padding:18px;border-radius:14px;border:1px solid rgba(217,119,6,0.04)}
+.details-table{width:100%;border-collapse:collapse;font-size:0.98rem}
+.details-table tr{border-bottom:1px solid rgba(0,0,0,0.04)}
+.details-table td{padding:10px 8px}
+
+.back-link a{color:var(--accent);font-weight:700;text-decoration:none}
+.back-link a:hover{text-decoration:underline}
+
+/* Car illustration animation: wheels spin and subtle bob */
+.car-illustration{width:100%;max-width:460px;margin:12px auto;display:block}
+.car-illustration svg{width:100%;height:auto;display:block}
+.wheel{transform-origin:center;animation:none}
+.drive .wheel{animation:wheel-spin 0.6s linear infinite}
+@keyframes wheel-spin{to{transform:rotate(360deg)}}
+.drive svg{transform:none;animation:drive-across 3s ease-in-out forwards}
+@keyframes drive-across{0%{transform:translateX(-30%)}50%{transform:translateX(40%)}100%{transform:translateX(110%)}}
+.car-bob{animation:car-bob 4s ease-in-out infinite}
+@keyframes car-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.btn-drive{padding:10px 18px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(46,139,87,0.12);transition:transform .12s ease}
+.btn-drive:hover{transform:translateY(-2px)}
+
+/* subtle focus ring for accessibility */
+:focus{outline:none}
+
+/* small utility */
+.center{display:flex;align-items:center;justify-content:center}
+

@@ -1,0 +1,100 @@
+<!--
+  index.html
+
+  Purpose:
+  - Render the main prediction form for the Car Price Predictor web app.
+  - Display model evaluation plots and an interactive car illustration used
+    for lightweight frontend polish.
+
+  Notes on how it works:
+  - The template expects `best_model`, `plots`, and `fields` variables from
+    the Flask view. Submitting the form posts to `/predict`.
+  - The `#car-stage` element contains an inline fallback SVG; an external
+    richer SVG can be injected at runtime by `static/js/car.js` if you place
+    one at `static/assets/car.svg`.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Car Price Predictor</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Car Price Predictor</h1>
+    <p>Enter vehicle details below to predict the price using a trained ML model.</p>
+
+    <div class="form-section">
+      <h2>Enter Vehicle Details</h2>
+      <form action="/predict" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="year">Year:</label>
+            <input type="number" name="year" id="year" required placeholder="e.g. 2015">
+          </div>
+          <div class="form-group">
+            <label for="manufacturer">Manufacturer:</label>
+            <input type="text" name="manufacturer" id="manufacturer" required placeholder="e.g. Toyota">
+          </div>
+          <div class="form-group">
+            <label for="model">Model:</label>
+            <input type="text" name="model" id="model" required placeholder="e.g. Camry">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="condition">Condition:</label>
+            <input type="text" name="condition" id="condition" required placeholder="e.g. Good">
+          </div>
+          <div class="form-group">
+            <label for="cylinders">Cylinders:</label>
+            <input type="number" name="cylinders" id="cylinders" required placeholder="e.g. 4">
+          </div>
+          <div class="form-group">
+            <label for="fuel">Fuel Type:</label>
+            <input type="text" name="fuel" id="fuel" required placeholder="e.g. Gasoline">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="transmission_type">Transmission Type:</label>
+            <input type="text" name="transmission_type" id="transmission_type" required placeholder="e.g. Automatic">
+          </div>
+          <div class="form-group">
+            <label for="paint_color">Paint Color:</label>
+            <input type="text" name="paint_color" id="paint_color" required placeholder="e.g. Black">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea name="description" id="description" placeholder="Vehicle description..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-row model-note-row">
+          <div class="form-group model-note">
+            Predictions are generated using the best available model: <strong>{{ best_model }}</strong>.
+          </div>
+        </div>
+        <input type="hidden" name="ml_model" value="{{ best_model }}">
+        <button type="submit" class="btn-submit">Predict Price</button>
+      </form>
+    </div>
+
+    <h2>Model Evaluation Plots</h2>
+    
+      <script src="/static/js/car.js"></script>
+    <div class="plots">
+      {% for p in plots %}
+        <div class="plot"><img src="/static/{{ p }}" alt="evaluation plot"></div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>
