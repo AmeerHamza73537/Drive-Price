@@ -19,82 +19,161 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Car Price Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Oxanium:wght@600;700;800&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Car Price Predictor</h1>
-    <p>Enter vehicle details below to predict the price using a trained ML model.</p>
+    <header class="hero-panel">
+      <div>
+        <p class="eyebrow">Car Price Estimator</p>
+        <h1>Precision Vehicle Valuation</h1>
+        <div class="accent-bar"></div>
+        <p class="hero-copy">Enter the vehicle details below for an instant price estimate. The dashboard aesthetic is built for speed, clarity, and premium automotive data confidence.</p>
+      </div>
+      <div class="hero-meta">
+        <span class="speedometer-badge">
+          <span class="speedometer-icon" aria-hidden="true">⏱</span>
+          Live estimate
+        </span>
+        <span>Best model: <strong>{{ best_model }}</strong></span>
+      </div>
+    </header>
 
-    <div class="form-section">
-      <h2>Enter Vehicle Details</h2>
+    <section class="form-section">
+      <div class="form-heading">
+        <div>
+          <p class="section-label">Vehicle profile</p>
+          <h2>Single-form prediction</h2>
+        </div>
+        <p class="section-note">Form fields collapse into a single column on mobile and keep a clean 2-column dashboard layout on desktop.</p>
+      </div>
+
       <form action="/predict" method="post">
-        <div class="form-row">
+        <div class="form-grid">
           <div class="form-group">
-            <label for="year">Year:</label>
-            <input type="number" name="year" id="year" required placeholder="e.g. 2015">
+            <label for="manufacturer">Brand</label>
+            <select name="manufacturer" id="manufacturer" required>
+              <option value="">Select brand</option>
+              <option>Toyota</option>
+              <option>Honda</option>
+              <option>Ford</option>
+              <option>BMW</option>
+              <option>Audi</option>
+              <option>Mercedes</option>
+              <option>Hyundai</option>
+              <option>Kia</option>
+              <option>Chevrolet</option>
+              <option>Nissan</option>
+              <option>Other</option>
+            </select>
           </div>
+
           <div class="form-group">
-            <label for="manufacturer">Manufacturer:</label>
-            <input type="text" name="manufacturer" id="manufacturer" required placeholder="e.g. Toyota">
-          </div>
-          <div class="form-group">
-            <label for="model">Model:</label>
+            <label for="model">Model</label>
             <input type="text" name="model" id="model" required placeholder="e.g. Camry">
           </div>
+
+          <div class="form-group">
+            <label for="year">Year</label>
+            <input type="number" name="year" id="year" required placeholder="e.g. 2018" min="1900" max="2030">
+          </div>
+
+          <div class="form-group">
+            <label for="odometer">Mileage (km)</label>
+            <input type="number" name="odometer" id="odometer" required placeholder="e.g. 75000" min="0" step="1">
+          </div>
+
+          <div class="form-group">
+            <label for="fuel">Fuel Type</label>
+            <select name="fuel" id="fuel" required>
+              <option value="">Select fuel</option>
+              <option>Gasoline</option>
+              <option>Diesel</option>
+              <option>Hybrid</option>
+              <option>Electric</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="transmission_type">Transmission</label>
+            <select name="transmission_type" id="transmission_type" required>
+              <option value="">Select transmission</option>
+              <option>Automatic</option>
+              <option>Manual</option>
+              <option>CVT</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="condition">Condition</label>
+            <select name="condition" id="condition" required>
+              <option value="">Select condition</option>
+              <option>Excellent</option>
+              <option>Good</option>
+              <option>Fair</option>
+              <option>Salvage</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cylinders">Cylinders</label>
+            <select name="cylinders" id="cylinders" required>
+              <option value="">Select cylinders</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>8</option>
+              <option>10</option>
+              <option>12</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="paint_color">Paint Color</label>
+            <input type="text" name="paint_color" id="paint_color" placeholder="e.g. Carbon Black">
+          </div>
+
+          <div class="form-group text-area-group">
+            <label for="description">Notes</label>
+            <textarea name="description" id="description" placeholder="Optional trim or condition notes..."></textarea>
+          </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="condition">Condition:</label>
-            <input type="text" name="condition" id="condition" required placeholder="e.g. Good">
-          </div>
-          <div class="form-group">
-            <label for="cylinders">Cylinders:</label>
-            <input type="number" name="cylinders" id="cylinders" required placeholder="e.g. 4">
-          </div>
-          <div class="form-group">
-            <label for="fuel">Fuel Type:</label>
-            <input type="text" name="fuel" id="fuel" required placeholder="e.g. Gasoline">
-          </div>
+        <div class="model-note">
+          Predictions are generated using the best available model: <strong>{{ best_model }}</strong>.
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="transmission_type">Transmission Type:</label>
-            <input type="text" name="transmission_type" id="transmission_type" required placeholder="e.g. Automatic">
-          </div>
-          <div class="form-group">
-            <label for="paint_color">Paint Color:</label>
-            <input type="text" name="paint_color" id="paint_color" required placeholder="e.g. Black">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea name="description" id="description" placeholder="Vehicle description..."></textarea>
-          </div>
-        </div>
-
-        <div class="form-row model-note-row">
-          <div class="form-group model-note">
-            Predictions are generated using the best available model: <strong>{{ best_model }}</strong>.
-          </div>
-        </div>
         <input type="hidden" name="ml_model" value="{{ best_model }}">
-        <button type="submit" class="btn-submit">Predict Price</button>
-      </form>
-    </div>
 
-    <h2>Model Evaluation Plots</h2>
-    
-      <script src="/static/js/car.js"></script>
-    <div class="plots">
-      {% for p in plots %}
-        <div class="plot"><img src="/static/{{ p }}" alt="evaluation plot"></div>
-      {% endfor %}
-    </div>
+        <div class="button-row">
+          <button type="submit" class="btn-submit">
+            <span class="btn-icon">&#9658;</span>
+            <span>Predict Price</span>
+          </button>
+        </div>
+
+        <div class="result-card result-intro">
+          <p class="result-title">Ready to estimate</p>
+          <p class="result-note">Submit the profile above and the dashboard will deliver a premium price estimate with a data-driven confidence note below.</p>
+        </div>
+      </form>
+    </section>
+
+    <!-- <section class="plots-section">
+      <div class="section-label">Model insights</div>
+      <h2>Evaluation Plots</h2>
+      <div class="plots">
+        {% for p in plots %}
+          <div class="plot"><img src="/static/{{ p }}" alt="evaluation plot"></div>
+        {% endfor %}
+      </div>
+    </section> -->
   </div>
 </body>
 </html>

@@ -15,34 +15,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Price Prediction Result</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Oxanium:wght@600;700;800&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Price Prediction Result</h1>
-    
-    <div class="result-box">
-      <h2>Predicted Price</h2>
-      <div class="prediction-display">{{ prediction }}</div>
-      <p class="model-info">Model: <strong>{{ model_name }}</strong></p>
+    <header class="hero-panel result-hero">
+      <p class="eyebrow">Estimated Value</p>
+      <h1>Your Car Price Forecast</h1>
+      <div class="accent-bar"></div>
+      <p class="hero-copy">This premium estimate is generated from the selected model and the vehicle profile you submitted.</p>
+    </header>
+
+    <div class="result-card">
+      <p class="result-title">Predicted Price</p>
+      <p class="prediction-display">{{ prediction }}</p>
+      <p class="result-subtle">Model: <strong>{{ model_name }}</strong></p>
+      <p class="result-note disclaimer">Estimate provided for reference only. Actual value may vary based on condition, inspection, and market demand.</p>
     </div>
 
-    <div class="vehicle-details">
-      <h3>Vehicle Details Entered:</h3>
-      <table class="details-table">
-        <tr><td><strong>Year:</strong></td><td>{{ form_data.year }}</td></tr>
-        <tr><td><strong>Manufacturer:</strong></td><td>{{ form_data.manufacturer }}</td></tr>
-        <tr><td><strong>Model:</strong></td><td>{{ form_data.model }}</td></tr>
-        <tr><td><strong>Condition:</strong></td><td>{{ form_data.condition }}</td></tr>
-        <tr><td><strong>Cylinders:</strong></td><td>{{ form_data.cylinders }}</td></tr>
-        <tr><td><strong>Fuel Type:</strong></td><td>{{ form_data.fuel }}</td></tr>
-        <tr><td><strong>Transmission:</strong></td><td>{{ form_data.transmission_type }}</td></tr>
-        <tr><td><strong>Paint Color:</strong></td><td>{{ form_data.paint_color }}</td></tr>
-        <tr><td><strong>Description:</strong></td><td>{{ form_data.description }}</td></tr>
-      </table>
-    </div>
+    <section class="vehicle-summary">
+      <div class="section-label">Vehicle Profile</div>
+      <div class="card-panel">
+        <div class="meta-card"><strong>Year</strong><span>{{ form_data.year }}</span></div>
+        <div class="meta-card"><strong>Brand</strong><span>{{ form_data.manufacturer }}</span></div>
+        <div class="meta-card"><strong>Model</strong><span>{{ form_data.model }}</span></div>
+        <div class="meta-card"><strong>Condition</strong><span>{{ form_data.condition }}</span></div>
+        <div class="meta-card"><strong>Fuel</strong><span>{{ form_data.fuel }}</span></div>
+        <div class="meta-card"><strong>Transmission</strong><span>{{ form_data.transmission_type }}</span></div>
+        <div class="meta-card"><strong>Mileage</strong><span>{{ form_data.odometer }}</span></div>
+        <div class="meta-card"><strong>Paint</strong><span>{{ form_data.paint_color }}</span></div>
+      </div>
+    </section>
 
-    <p class="back-link"><a href="/">Make Another Prediction</a></p>
+    <p class="back-link"><a href="/">Make another prediction</a></p>
   </div>
 </body>
 </html>

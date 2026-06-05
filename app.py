@@ -51,7 +51,7 @@ if os.path.exists(PREPROCESSOR_PATH):
     PREPROCESSOR = joblib.load(PREPROCESSOR_PATH)
 
 # Define the input fields for the form
-INPUT_FIELDS = ["year", "manufacturer", "model", "condition", "cylinders", "fuel", "transmission_type", "paint_color", "description"]
+INPUT_FIELDS = ["year", "manufacturer", "model", "condition", "cylinders", "fuel", "transmission_type", "paint_color", "description", "odometer"]
 
 # Load training data to infer expected columns and provide defaults
 TRAINING_COLUMNS = []
@@ -115,6 +115,13 @@ def predict():
         full_row["year"] = int(form_data["year"]) if form_data["year"] else np.nan
     except ValueError:
         return "Error: year must be numeric", 400
+
+    # Numeric odometer value is used if the model expects it
+    if form_data["odometer"]:
+        try:
+            full_row["odometer"] = float(form_data["odometer"])
+        except ValueError:
+            return "Error: mileage must be numeric", 400
 
     # Cylinders is stored in training data as a categorical value like '4 cylinders'
     if form_data["cylinders"]:
