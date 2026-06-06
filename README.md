@@ -1,290 +1,105 @@
-# # Car Price Predictor
+# DrivePrice — Car Price Predictor
 
-A full-stack vehicle valuation project built with Python, Flask, and scikit-learn. This repository demonstrates a complete machine learning workflow for predicting used car prices, including data preprocessing, model training, evaluation, and a lightweight web UI for real-time predictions.
+End-to-end project for estimating used vehicle prices using scikit-learn and a small Flask UI.
 
-## Key Features
+## Summary
 
-- End-to-end regression pipeline for vehicle price estimation
-- Data cleaning and preprocessing with custom category reduction
-- Multiple trained models: `LinearRegression`, `RandomForest`, `GradientBoosting`, and `AdaBoost`
-- Target transformation using `TransformedTargetRegressor` for stable pricing predictions
-- Web interface built with Flask for submitting vehicle details and viewing predicted price
-- Evaluation artifacts saved as CSV and plotted images
+DrivePrice trains regression models on vehicle listing data, persists preprocessing and model artifacts, and exposes a lightweight web UI to obtain single-row price predictions. The repository includes data cleaning, a reusable preprocessing pipeline, multiple regressor training (with target transformation), evaluation plots, and a minimal Flask frontend.
 
-## Project Overview
+## Features
 
-The project consists of three main layers:
+- Reproducible preprocessing pipeline with median imputation and scaling for numeric features
+- High-cardinality categorical reduction (`CategoryReducer`) and one-hot encoding for categorical features
+- Multiple regression models: `LinearRegression`, `RandomForest`, `GradientBoosting`, `AdaBoost`
+- Log-target transform (`TransformedTargetRegressor`) to stabilise targets and improve numeric behaviour
+- Persisted artifacts (`models/*.joblib`) for fast inference
+- Lightweight Flask UI (`app.py`, `templates/`) for quick local predictions
 
-1. **Data preparation and preprocessing**
-   - `src/preprocess.py` loads raw vehicle listings, removes invalid and extreme values, and builds a reusable preprocessing pipeline.
-   - Numeric features are median-imputed and standardized.
-   - Categorical features are intelligently encoded with high-cardinality reduction to keep the feature matrix compact.
+## Quick start (Windows)
 
-2. **Model training and evaluation**
-   - `src/train_models.py` trains several regression models on a cleaned dataset.
-   - Each regressor is wrapped with a log-target transformation to minimize skew impact and stabilize predictions.
-   - Model performance is recorded in `outputs/results.csv` and visualized in `static/plots/`.
+1. Clone the repository and enter the folder:
 
-3. **Web application for prediction**
-   - `app.py` starts a Flask server and provides a simple prediction workflow.
-   - Users enter vehicle details in `templates/index.html` and receive a predicted price on `templates/results.html`.
-   - Saved transformers and models in `models/` are loaded at runtime for consistent inference.
-
-## Repository Structure
-
-- `app.py` — Flask application serving the prediction form and result pages
-- `src/preprocess.py` — data cleaning and feature preprocessing utilities
-- `src/train_models.py` — training script for model fitting and evaluation
-- `models/` — saved scikit-learn artifacts (`.joblib` files)
-- `static/` — styling and generated plot assets
-- `templates/` — Flask HTML templates for UI pages
-- `outputs/` — training results table and evaluation outputs
-- `vehicles.csv` — training dataset expected at project root
-
-## Installation
-
-1. Clone the repository:
-
-```bash
+```powershell
 git clone <repository-url>
 cd "Car Price Predictor"
 ```
 
-2. Create and activate a Python virtual environment:
+2. Create and activate a virtual environment, then install dependencies:
 
-```bash
+```powershell
 python -m venv .venv
-.\.venv\Scripts\activate
-```
-
-3. Install dependencies:
-
-```bash
+.\.venv\Scripts\Activate.ps1    # PowerShell
 pip install -r requirements.txt
 ```
 
-4. Ensure the dataset file `vehicles.csv` is available in the repository root.
+3. Add your dataset `vehicles.csv` (it must contain a `price` column) to the repository root.
+
+4. (Optional) Train models and generate evaluation artifacts:
+
+```powershell
+python -m src.train_models
+```
+
+5. Run the Flask app locally:
+
+```powershell
+python app.py
+# Open http://127.0.0.1:5000/ in your browser
+```
 
 ## Usage
 
-### Train models
+- Use the web form on the index page to submit vehicle attributes and receive a predicted price.
+- Training outputs are written to `models/` (persisted artifacts), `static/plots/` (visualizations), and `outputs/results.csv` (metrics).
 
-Run the training script to build the preprocessing pipeline, fit the models, and generate evaluation artifacts:
+## Project layout
 
-```bash
-python src/train_models.py
-```
+- `app.py` — Flask app serving the prediction form and results
+- `src/preprocess.py` — dataset loading, cleaning, and `build_preprocessor`
+- `src/train_models.py` — training, evaluation, and model export
+- `models/` — saved preprocessor and trained models (`*.joblib`)
+- `static/` — style and generated plots (`static/plots/`)
+- `templates/` — Jinja2 templates for the UI
+- `outputs/` — evaluation CSVs such as `results.csv`
+- `vehicles.csv` — expected input dataset (not tracked in the repo)
 
-This creates:
+## Preprocessing details
 
-- `models/preprocessor.joblib`
-- `models/LinearRegression.joblib`
-- `models/RandomForest.joblib`
-- `models/GradientBoosting.joblib`
-- `models/AdaBoost.joblib`
-- `outputs/results.csv`
-- `static/plots/model_metrics.png`
-- `static/plots/<model>_pred_vs_actual.png`
+`src/preprocess.py` builds a `ColumnTransformer` that:
 
-### Run the web app
+- Infers numeric and categorical columns from a sample DataFrame
+- Applies median imputation and `StandardScaler` to numeric columns
+- For categorical columns: most-frequent imputation, optional top-N reduction via `CategoryReducer`, then one-hot encoding
 
-Start the Flask server:
+This approach keeps the feature matrix compact and stable for training.
 
-```bash
-python app.py
-```
+## Training & models
 
-Then open the app in your browser at:
+`src/train_models.py` trains multiple regressors wrapped with `TransformedTargetRegressor` using `np.log1p` / `np.expm1` for the target. This reduces the influence of price skew and makes metrics more stable. Trained models and the fitted preprocessor are saved to `models/` as `.joblib` files.
 
-```text
-http://127.0.0.1:5000/
-```
+## Running in production
 
-### Use the UI
-
-- Fill out the vehicle profile fields
-- Submit the form to receive a predicted sale price
-- View the prediction details and vehicle summary on the results page
-
-## Model Details
-
-The training workflow uses the following regressors:
-
-- `LinearRegression`
-- `RandomForestRegressor`
-- `GradientBoostingRegressor`
-- `AdaBoostRegressor`
-
-Each model is fitted after applying the preprocessing pipeline and a log-based target transform. This helps reduce the effect of high-value outliers and improves overall regression behavior.
-
-## Preprocessing Strategy
-
-The preprocessing pipeline supports:
-
-- median imputation and scaling for numeric values
-- frequency-based category reduction for high-cardinality categorical columns
-- one-hot encoding for categorical features
-- feature selection using the application-specific fields in `DEFAULT_FEATURE_COLUMNS`
-
-## Deployment Notes
-
-- `app.py` automatically loads available `.joblib` model artifacts from `models/`.
-- The app selects a default best model, currently configured to use `RandomForest` if present.
-- If `models/preprocessor.joblib` is missing, the app attempts to infer expected columns from the training dataset.
+- The Flask app loads any `.joblib` models found in `models/` at startup.
+- For production, serve the Flask app with a WSGI server (e.g. Gunicorn) behind a reverse proxy, enable logging and HTTPS, and secure model artifact access.
 
 ## Dependencies
 
-Core dependencies are listed in `requirements.txt`:
+Core dependencies (see `requirements.txt`): `Flask`, `pandas`, `scikit-learn`, `matplotlib`, `seaborn`, `joblib`, `numpy`.
 
-- Flask
-- pandas
-- scikit-learn
-- matplotlib
-- seaborn
-- joblib
-- numpy
+## Notes
 
-## Notes and Considerations
+- Ensure `vehicles.csv` contains a `price` column before training.
+- If you rename or reorder fields exposed in the UI, update `DEFAULT_FEATURE_COLUMNS` in `src/preprocess.py` and the form in `templates/index.html`.
+- Use `validate_model.py` to quickly sanity-check saved preprocessor/model pairs.
 
-- The project expects structured vehicle listing data in `vehicles.csv`.
-- The UI is designed for a single-row prediction workflow and demonstrates how model artifacts can be reused in production.
-- The current codebase ships with evaluation visualization support, but additional dashboard functionality can be enabled by adding more plots or summary statistics.
+## Contributing
 
-## Future Improvements
-
-Potential next steps for the project:
-
-- Add an API endpoint for programmatic predictions
-- Improve form validation and user error handling
-- Add authentication and model version selection controls
-- Enhance dataset feature engineering with mileage age, make/model grouping, and location data
-- Replace static evaluation plots with an interactive analytics dashboard
+Contributions are welcome. Please open focused pull requests and run the validation scripts locally before submitting. If you want help adding CI, tests, or a `CONTRIBUTING.md`, tell me which services to target.
 
 ## License
 
-Add your preferred license information here.
- Flask UI to upload data and get batch predictions.
+Add your preferred license text here.
 
-Quick start
+---
 
-1. Create a virtual environment and install dependencies:
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-2. Train models (this will read `vehicles.csv` in project root):
-
-```bash
-python -m src.train_models
-```
-
-3. Run the Flask UI:
-
-```bash
-python app.py
-```
-
-4. Open http://127.0.0.1:5000 in your browser to use the prediction form.
-
-Notes
-
-- The training script expects a `price` column in `vehicles.csv`. If your target column is named differently, update the `target_column` argument in `src/train_models.py`.
-- The UI accepts the following fields: year, manufacturer, model, condition, cylinders, fuel, transmission_type, paint_color, description, county.
-
-<!--
-Professional README for the Car Price Predictor project.
-This README presents a concise project overview, quick start, and links
-to the main implementation files to help maintainers and contributors.
--->
-
-# DrivePrice — Car Price Predictor
-
-DrivePrice is a lightweight machine learning project that predicts used
-vehicle prices from listing attributes. It bundles data preprocessing,
-model training, evaluation visualizations, and a small Flask web UI for
-single-row and batch predictions.
-
-Key features
-
-- Data cleaning and preprocessing with scikit-learn pipelines (`src/preprocess.py`).
-- Multiple regression models trained and compared (`src/train_models.py`).
-- Target stabilisation via log-transform using `TransformedTargetRegressor`.
-- Persisted preprocessor and models stored in `models/` for fast inference.
-- Simple Flask UI (`app.py`, `templates/`) with an interactive SVG car illustration.
-
-Quick start (Windows)
-
-1. Create and activate a virtual environment, then install dependencies:
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-2. (Optional) Train models (reads `vehicles.csv` in project root):
-
-```powershell
-python -m src.train_models
-```
-
-3. Run the Flask app for local testing:
-
-```powershell
-python app.py
-# Then open http://127.0.0.1:5000 in your browser
-```
-
-If you prefer Unix shells, the same commands work with `/bin/activate`.
-
-Usage notes
-
-- The training pipeline expects a `price` column in `vehicles.csv` by
-	default. You may change the `target_column` argument in
-	[`src/train_models.py`](src/train_models.py#L1) when running training on a
-	differently-structured dataset.
-- The web UI accepts the following fields: year, manufacturer, model,
-	condition, cylinders, fuel, transmission_type, paint_color, description.
-
-Project layout
-
-- `app.py` — Flask application and endpoints serving the UI and predictions ([app.py](app.py#L1)).
-- `src/preprocess.py` — dataset loading, `clean_data`, and `build_preprocessor` ([src/preprocess.py](src/preprocess.py#L1)).
-- `src/train_models.py` — training, evaluation, and model export ([src/train_models.py](src/train_models.py#L1)).
-- `templates/` — Jinja2 templates for the web UI ([templates/index.html](templates/index.html#L1), [templates/results.html](templates/results.html#L1)).
-- `static/` — CSS, JS, generated plots and assets (see `static/js/car.js`).
-- `models/` — saved `joblib` artifacts: preprocessor and trained models.
-- `outputs/` — CSV outputs such as `results.csv` with evaluation metrics.
-
-Development & contribution
-
-- Prefer lightweight, focused pull requests that update a single area
-	(preprocessing, model architecture, or UI) at a time.
-- If adding external SVG assets for the car illustration, place them at
-	`static/assets/car.svg` — the frontend will automatically load it.
-- Before opening a PR, run training or at least `validate_model.py` to
-	ensure the preprocessor and models function as expected.
-
-Helpful scripts
-
-- `validate_model.py` — quick script to load the saved preprocessor and a
-	model and print predictions for hand-crafted examples ([validate_model.py](validate_model.py#L1)).
-- `temp_inspect.py` / `temp_inspect2.py` — ad-hoc CSV inspection helpers.
-
-License & contact
-
-This project is provided as-is for learning and prototyping. If you plan
-to publish or redistribute the models or derivative services, verify that
-the dataset license permits your intended use.
-
-If you want any specific badges (CI, license, PyPI) or a CONTRIBUTING.md
-guide, tell me which services to target and I can add them.#   D r i v e - P r i c e 
- 
- #   D r i v e - P r i c e 
- 
- #   D r i v e - P r i c e 
- 
- 
+If you want the README adjusted (additional badges, a short demo GIF, or a CONTRIBUTING guide), tell me what you'd like and I'll add it.
